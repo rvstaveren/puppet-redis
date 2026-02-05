@@ -16,6 +16,12 @@
 # @param config_file_mode
 #   Permissions of config file.
 #
+# @param config_group
+#   Adjust filesystem group for config files.
+#
+# @param config_owner
+#   Adjust filesystem owner for config files.
+#
 # @param conf_template
 #   Define which template to use.
 #
@@ -164,6 +170,8 @@ class redis::sentinel (
   Stdlib::Absolutepath $config_file = $redis::params::sentinel_config_file,
   Stdlib::Absolutepath $config_file_orig = $redis::params::sentinel_config_file_orig,
   Stdlib::Filemode $config_file_mode = '0640',
+  String[1] $config_group = $redis::params::config_group,
+  String[1] $config_owner = $redis::params::config_owner,
   String[1] $conf_template = 'redis/redis-sentinel.conf.epp',
   Boolean $daemonize = $redis::params::sentinel_daemonize,
   Boolean $protected_mode = true,
@@ -226,8 +234,8 @@ class redis::sentinel (
 
   file { $config_file_orig:
     ensure  => file,
-    owner   => $service_user,
-    group   => $service_group,
+    owner   => $config_owner,
+    group   => $config_group,
     mode    => $config_file_mode,
     content => epp($conf_template),
   }
