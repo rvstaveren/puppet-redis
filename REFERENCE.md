@@ -1554,6 +1554,8 @@ The following parameters are available in the `redis::sentinel` class:
 * [`config_file`](#-redis--sentinel--config_file)
 * [`config_file_orig`](#-redis--sentinel--config_file_orig)
 * [`config_file_mode`](#-redis--sentinel--config_file_mode)
+* [`config_group`](#-redis--sentinel--config_group)
+* [`config_owner`](#-redis--sentinel--config_owner)
 * [`conf_template`](#-redis--sentinel--conf_template)
 * [`daemonize`](#-redis--sentinel--daemonize)
 * [`down_after`](#-redis--sentinel--down_after)
@@ -1631,6 +1633,22 @@ Data type: `Stdlib::Filemode`
 Permissions of config file.
 
 Default value: `'0640'`
+
+##### <a name="-redis--sentinel--config_group"></a>`config_group`
+
+Data type: `String[1]`
+
+Adjust filesystem group for config files.
+
+Default value: `$redis::params::config_group`
+
+##### <a name="-redis--sentinel--config_owner"></a>`config_owner`
+
+Data type: `String[1]`
+
+Adjust filesystem owner for config files.
+
+Default value: `$redis::params::config_owner`
 
 ##### <a name="-redis--sentinel--conf_template"></a>`conf_template`
 
