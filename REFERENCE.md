@@ -1596,6 +1596,7 @@ The following parameters are available in the `redis::sentinel` class:
 * [`sentinel_auth_pass`](#-redis--sentinel--sentinel_auth_pass)
 * [`sentinel_auth_user`](#-redis--sentinel--sentinel_auth_user)
 * [`acls`](#-redis--sentinel--acls)
+* [`manage_redis`](#-redis--sentinel--manage_redis)
 * [`service_ensure`](#-redis--sentinel--service_ensure)
 
 ##### <a name="-redis--sentinel--auth_pass"></a>`auth_pass`
@@ -1983,6 +1984,14 @@ in the form of:
   user USERNAME [additional ACL options]
 
 Default value: `[]`
+
+##### <a name="-redis--sentinel--manage_redis"></a>`manage_redis`
+
+Data type: `Boolean`
+
+Manage redis base class. If set to false, sentinel is installed without redis server.
+
+Default value: `true`
 
 ##### <a name="-redis--sentinel--service_ensure"></a>`service_ensure`
 

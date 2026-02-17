@@ -156,6 +156,10 @@
 #
 #     user USERNAME [additional ACL options]
 #
+# @param manage_redis
+#   Manage redis base class. If set to false, sentinel is installed without redis server.
+#
+#
 # @example Basic inclusion
 #   include redis::sentinel
 #
@@ -213,6 +217,7 @@ class redis::sentinel (
   Optional[Variant[String[1], Sensitive[String[1]]]] $sentinel_auth_pass = undef,
   Optional[String[1]] $sentinel_auth_user = undef,
   Array[String[1]] $acls = [],
+  Boolean $manage_redis = true,
 ) inherits redis::params {
   $auth_pass_unsensitive = if $auth_pass =~ Sensitive {
     $auth_pass.unwrap
@@ -220,7 +225,9 @@ class redis::sentinel (
     $auth_pass
   }
 
-  contain 'redis'
+  if $manage_redis {
+    contain 'redis'
+  }
 
   if $package_name != $redis::package_name {
     stdlib::ensure_packages([$package_name],
@@ -228,7 +235,9 @@ class redis::sentinel (
         ensure => $package_ensure
       },
     )
-    Package[$package_name] -> Class['redis']
+    if $manage_redis {
+      Package[$package_name] -> Class['redis']
+    }
   }
   Package[$package_name] -> File[$config_file_orig]
 
