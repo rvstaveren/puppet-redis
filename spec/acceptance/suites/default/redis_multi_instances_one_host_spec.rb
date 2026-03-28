@@ -11,7 +11,7 @@ describe 'redis::instance example' do
 
   redis = case fact('os.family')
           when 'RedHat'
-            fact('os.release.major').to_i > 9 ? 'valkey' : 'redis'
+            (fact('os.release.major').to_i > 9) ? 'valkey' : 'redis'
           else
             'redis'
           end
@@ -20,7 +20,7 @@ describe 'redis::instance example' do
                 when 'Debian'
                   "/etc/#{redis}"
                 when 'RedHat'
-                  fact('os.release.major').to_i >= 9 ? "/etc/#{redis}" : '/etc'
+                  (fact('os.release.major').to_i >= 9) ? "/etc/#{redis}" : '/etc'
                 else
                   '/etc'
                 end
@@ -71,22 +71,22 @@ describe 'redis::instance example' do
 
   instances.each do |instance|
     specify do
-      expect(file("/etc/systemd/system/#{redis}-server-#{instance}.service")).
-        to be_file.
-        and have_attributes(content: include("#{redis}-server-#{instance}.conf"))
+      expect(file("/etc/systemd/system/#{redis}-server-#{instance}.service"))
+        .to be_file
+        .and have_attributes(content: include("#{redis}-server-#{instance}.conf"))
     end
 
     specify { expect(service("#{redis}-server-#{instance}")).to be_enabled.and be_running }
 
     specify do
-      expect(file("#{config_path}/#{redis}-server-#{instance}.conf")).
-        to be_file.
-        and have_attributes(content: include("port #{instance}"))
+      expect(file("#{config_path}/#{redis}-server-#{instance}.conf"))
+        .to be_file
+        .and have_attributes(content: include("port #{instance}"))
     end
 
     specify "redis instance #{instance} should respond to ping command" do
-      expect(command("#{redis}-cli -h #{fact('networking.ip')} -p #{instance} ping")).
-        to have_attributes(stdout: %r{PONG})
+      expect(command("#{redis}-cli -h #{fact('networking.ip')} -p #{instance} ping"))
+        .to have_attributes(stdout: %r{PONG})
     end
   end
 end

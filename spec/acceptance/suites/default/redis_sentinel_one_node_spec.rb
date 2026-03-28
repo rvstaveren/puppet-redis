@@ -5,12 +5,12 @@ require 'spec_helper_acceptance'
 describe 'redis::sentinel' do
   redis = case fact('os.family')
           when 'RedHat'
-            fact('os.release.major').to_i > 9 ? 'valkey' : 'redis'
+            (fact('os.release.major').to_i > 9) ? 'valkey' : 'redis'
           else
             'redis'
           end
 
-  redis_name = fact('os.family') == 'Debian' ? "#{redis}-server" : redis
+  redis_name = (fact('os.family') == 'Debian') ? "#{redis}-server" : redis
 
   include_examples 'an idempotent resource' do
     let(:manifest) do
@@ -28,8 +28,8 @@ describe 'redis::sentinel' do
   specify { expect(service(redis_name)).to be_running }
 
   specify 'redis should respond to ping command' do
-    expect(command("#{redis}-cli ping")).
-      to have_attributes(stdout: %r{PONG})
+    expect(command("#{redis}-cli ping"))
+      .to have_attributes(stdout: %r{PONG})
   end
 
   specify { expect(service("#{redis}-sentinel")).to be_running }
@@ -41,7 +41,7 @@ describe 'redis::sentinel' do
   end
 
   specify 'redis-sentinel should return correct sentinel master' do
-    expect(command("#{redis}-cli -p 26379 SENTINEL masters")).
-      to have_attributes(stdout: %r{^mymaster})
+    expect(command("#{redis}-cli -p 26379 SENTINEL masters"))
+      .to have_attributes(stdout: %r{^mymaster})
   end
 end

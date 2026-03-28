@@ -7,14 +7,14 @@ describe 'redis::administration' do
     it do
       is_expected.to contain_sysctl('vm.overcommit_memory').with(
         'ensure' => 'present',
-        'value' => '1'
+        'value' => '1',
       )
     end
 
     it do
       is_expected.to contain_sysctl('net.core.somaxconn').with(
         'ensure' => 'present',
-        'value' => '65535'
+        'value' => '65535',
       )
     end
   end

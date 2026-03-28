@@ -7,7 +7,7 @@ describe 'redis' do
   let(:redis) do
     case facts['os']['family']
     when 'RedHat'
-      facts['os']['release']['major'].to_i > 9 ? 'valkey' : 'redis'
+      (facts['os']['release']['major'].to_i > 9) ? 'valkey' : 'redis'
     else
       'redis'
     end
@@ -52,15 +52,15 @@ describe 'redis' do
         it { is_expected.to contain_package(package_name).with_ensure('installed') }
 
         it do
-          is_expected.to contain_file(config_file_orig).
-            with_ensure('file').
-            with_content(%r{logfile /var/log/#{redis}/#{redis}.log}).
-            without_content(%r{undef})
+          is_expected.to contain_file(config_file_orig)
+            .with_ensure('file')
+            .with_content(%r{logfile /var/log/#{redis}/#{redis}.log})
+            .without_content(%r{undef})
 
           if facts['os']['family'] == 'FreeBSD'
-            is_expected.to contain_file(config_file_orig).
-              with_content(%r{dir /var/db/redis}).
-              with_content(%r{pidfile /var/run/redis/redis\.pid})
+            is_expected.to contain_file(config_file_orig)
+              .with_content(%r{dir /var/db/redis})
+              .with_content(%r{pidfile /var/run/redis/redis\.pid})
           end
         end
 
@@ -93,7 +93,7 @@ describe 'redis' do
             'owner' => 'root',
             'group' => 'root',
             'mode' => '0644',
-            'content' => "#{redis} soft nofile 65536\n#{redis} hard nofile 65536\n"
+            'content' => "#{redis} soft nofile 65536\n#{redis} hard nofile 65536\n",
           )
         end
 
@@ -108,7 +108,7 @@ describe 'redis' do
               'owner' => 'root',
               'group' => 'root',
               'mode' => '0644',
-              'content' => "#{redis} soft nofile 65536\n#{redis} hard nofile 65536\n"
+              'content' => "#{redis} soft nofile 65536\n#{redis} hard nofile 65536\n",
             )
           end
         end
@@ -121,13 +121,13 @@ describe 'redis' do
           it { is_expected.to compile.with_all_deps }
 
           it do
-            is_expected.to contain_file("/etc/systemd/system/#{service_name}.service.d/limit.conf").
-              with_ensure('absent')
+            is_expected.to contain_file("/etc/systemd/system/#{service_name}.service.d/limit.conf")
+              .with_ensure('absent')
 
-            is_expected.to contain_systemd__manage_dropin("#{service_name}-90-limits.conf").
-              with_service_entry({ 'LimitNOFILE' => 7777 }).
-              with_ensure('present').
-              with_unit("#{service_name}.service")
+            is_expected.to contain_systemd__manage_dropin("#{service_name}-90-limits.conf")
+              .with_service_entry({ 'LimitNOFILE' => 7777 })
+              .with_ensure('present')
+              .with_unit("#{service_name}.service")
           end
         end
 
@@ -145,7 +145,7 @@ describe 'redis' do
       describe 'with parameter activerehashing' do
         let(:params) do
           {
-            activerehashing: true
+            activerehashing: true,
           }
         end
 
@@ -155,7 +155,7 @@ describe 'redis' do
       describe 'with parameter aof_load_truncated' do
         let(:params) do
           {
-            aof_load_truncated: true
+            aof_load_truncated: true,
           }
         end
 
@@ -165,7 +165,7 @@ describe 'redis' do
       describe 'with parameter aof_rewrite_incremental_fsync' do
         let(:params) do
           {
-            aof_rewrite_incremental_fsync: true
+            aof_rewrite_incremental_fsync: true,
           }
         end
 
@@ -175,7 +175,7 @@ describe 'redis' do
       describe 'with parameter appendfilename' do
         let(:params) do
           {
-            appendfilename: '_VALUE_'
+            appendfilename: '_VALUE_',
           }
         end
 
@@ -185,7 +185,7 @@ describe 'redis' do
       describe 'with parameter appendfsync' do
         let(:params) do
           {
-            appendfsync: 'no'
+            appendfsync: 'no',
           }
         end
 
@@ -195,7 +195,7 @@ describe 'redis' do
       describe 'with parameter appendonly' do
         let(:params) do
           {
-            appendonly: true
+            appendonly: true,
           }
         end
 
@@ -205,7 +205,7 @@ describe 'redis' do
       describe 'with parameter auto_aof_rewrite_min_size' do
         let(:params) do
           {
-            auto_aof_rewrite_min_size: '_VALUE_'
+            auto_aof_rewrite_min_size: '_VALUE_',
           }
         end
 
@@ -215,7 +215,7 @@ describe 'redis' do
       describe 'with parameter auto_aof_rewrite_percentage' do
         let(:params) do
           {
-            auto_aof_rewrite_percentage: 75
+            auto_aof_rewrite_percentage: 75,
           }
         end
 
@@ -238,7 +238,7 @@ describe 'redis' do
         context 'with array of IP addresses' do
           let(:params) do
             {
-              bind: ['127.0.0.1', '::1']
+              bind: ['127.0.0.1', '::1'],
             }
           end
 
@@ -255,7 +255,7 @@ describe 'redis' do
       describe 'with parameter output_buffer_limit_slave' do
         let(:params) do
           {
-            output_buffer_limit_slave: '_VALUE_'
+            output_buffer_limit_slave: '_VALUE_',
           }
         end
 
@@ -265,7 +265,7 @@ describe 'redis' do
       describe 'with parameter output_buffer_limit_pubsub' do
         let(:params) do
           {
-            output_buffer_limit_pubsub: '_VALUE_'
+            output_buffer_limit_pubsub: '_VALUE_',
           }
         end
 
@@ -317,13 +317,13 @@ describe 'redis' do
       describe 'with parameter daemonize' do
         let(:params) do
           {
-            daemonize: true
+            daemonize: true,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{daemonize.*yes}
+            'content' => %r{daemonize.*yes},
           )
         }
       end
@@ -331,13 +331,13 @@ describe 'redis' do
       describe 'with parameter databases' do
         let(:params) do
           {
-            databases: 42
+            databases: 42,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{databases 42}
+            'content' => %r{databases 42},
           )
         }
       end
@@ -345,13 +345,13 @@ describe 'redis' do
       describe 'with parameter dbfilename' do
         let(:params) do
           {
-            dbfilename: '_VALUE_'
+            dbfilename: '_VALUE_',
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{dbfilename.*_VALUE_}
+            'content' => %r{dbfilename.*_VALUE_},
           )
         }
       end
@@ -359,7 +359,7 @@ describe 'redis' do
       describe 'without parameter dbfilename' do
         let(:params) do
           {
-            dbfilename: false
+            dbfilename: false,
           }
         end
 
@@ -369,13 +369,13 @@ describe 'redis' do
       describe 'with parameter hash_max_ziplist_entries' do
         let(:params) do
           {
-            hash_max_ziplist_entries: 42
+            hash_max_ziplist_entries: 42,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{hash-max-ziplist-entries 42}
+            'content' => %r{hash-max-ziplist-entries 42},
           )
         }
       end
@@ -383,13 +383,13 @@ describe 'redis' do
       describe 'with parameter hash_max_ziplist_value' do
         let(:params) do
           {
-            hash_max_ziplist_value: 42
+            hash_max_ziplist_value: 42,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{hash-max-ziplist-value 42}
+            'content' => %r{hash-max-ziplist-value 42},
           )
         }
       end
@@ -398,13 +398,13 @@ describe 'redis' do
       describe 'with parameter list_max_ziplist_entries' do
         let(:params) do
           {
-            list_max_ziplist_entries: 42
+            list_max_ziplist_entries: 42,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{list-max-ziplist-entries 42}
+            'content' => %r{list-max-ziplist-entries 42},
           )
         }
       end
@@ -412,13 +412,13 @@ describe 'redis' do
       describe 'with parameter list_max_ziplist_value' do
         let(:params) do
           {
-            list_max_ziplist_value: 42
+            list_max_ziplist_value: 42,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{list-max-ziplist-value 42}
+            'content' => %r{list-max-ziplist-value 42},
           )
         }
       end
@@ -426,13 +426,13 @@ describe 'redis' do
       describe 'with parameter log_dir' do
         let(:params) do
           {
-            log_dir: '/var/log/redis'
+            log_dir: '/var/log/redis',
           }
         end
 
         it {
           is_expected.to contain_file('/var/log/redis').with(
-            'ensure' => 'directory'
+            'ensure' => 'directory',
           )
         }
       end
@@ -441,13 +441,13 @@ describe 'redis' do
         describe 'as absolute path' do
           let(:params) do
             {
-              log_file: '/var/log/my-redis/my-redis.log'
+              log_file: '/var/log/my-redis/my-redis.log',
             }
           end
 
           it {
             is_expected.to contain_file(config_file_orig).with(
-              'content' => %r{^logfile /var/log/my-redis/my-redis\.log$}
+              'content' => %r{^logfile /var/log/my-redis/my-redis\.log$},
             )
           }
         end
@@ -456,13 +456,13 @@ describe 'redis' do
           let(:params) do
             {
               log_dir: '/var/log/my-redis',
-              log_file: 'my-redis.log'
+              log_file: 'my-redis.log',
             }
           end
 
           it {
             is_expected.to contain_file(config_file_orig).with(
-              'content' => %r{^logfile /var/log/my-redis/my-redis\.log$}
+              'content' => %r{^logfile /var/log/my-redis/my-redis\.log$},
             )
           }
         end
@@ -471,13 +471,13 @@ describe 'redis' do
       describe 'with parameter log_level' do
         let(:params) do
           {
-            log_level: 'debug'
+            log_level: 'debug',
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{^loglevel debug$}
+            'content' => %r{^loglevel debug$},
           )
         }
       end
@@ -527,13 +527,13 @@ describe 'redis' do
       describe 'with parameter masterauth' do
         let(:params) do
           {
-            masterauth: '_VALUE_'
+            masterauth: '_VALUE_',
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{masterauth.*_VALUE_}
+            'content' => %r{masterauth.*_VALUE_},
           )
         }
       end
@@ -541,13 +541,13 @@ describe 'redis' do
       describe 'with parameter maxclients' do
         let(:params) do
           {
-            maxclients: 42
+            maxclients: 42,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{^maxclients 42$}
+            'content' => %r{^maxclients 42$},
           )
         }
       end
@@ -555,13 +555,13 @@ describe 'redis' do
       describe 'with parameter maxmemory' do
         let(:params) do
           {
-            maxmemory: '_VALUE_'
+            maxmemory: '_VALUE_',
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{maxmemory.*_VALUE_}
+            'content' => %r{maxmemory.*_VALUE_},
           )
         }
       end
@@ -569,13 +569,13 @@ describe 'redis' do
       describe 'with parameter maxmemory_policy' do
         let(:params) do
           {
-            maxmemory_policy: 'noeviction'
+            maxmemory_policy: 'noeviction',
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{maxmemory-policy.*noeviction}
+            'content' => %r{maxmemory-policy.*noeviction},
           )
         }
       end
@@ -583,13 +583,13 @@ describe 'redis' do
       describe 'with parameter maxmemory_samples' do
         let(:params) do
           {
-            maxmemory_samples: 9
+            maxmemory_samples: 9,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{maxmemory-samples.*9}
+            'content' => %r{maxmemory-samples.*9},
           )
         }
       end
@@ -597,13 +597,13 @@ describe 'redis' do
       describe 'with parameter min_slaves_max_lag' do
         let(:params) do
           {
-            min_slaves_max_lag: 42
+            min_slaves_max_lag: 42,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{^min-slaves-max-lag 42$}
+            'content' => %r{^min-slaves-max-lag 42$},
           )
         }
       end
@@ -611,13 +611,13 @@ describe 'redis' do
       describe 'with parameter min_slaves_to_write' do
         let(:params) do
           {
-            min_slaves_to_write: 42
+            min_slaves_to_write: 42,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{^min-slaves-to-write 42$}
+            'content' => %r{^min-slaves-to-write 42$},
           )
         }
       end
@@ -625,13 +625,13 @@ describe 'redis' do
       describe 'with parameter notify_keyspace_events' do
         let(:params) do
           {
-            notify_keyspace_events: '_VALUE_'
+            notify_keyspace_events: '_VALUE_',
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{notify-keyspace-events.*_VALUE_}
+            'content' => %r{notify-keyspace-events.*_VALUE_},
           )
         }
       end
@@ -639,7 +639,7 @@ describe 'redis' do
       describe 'with parameter notify_service' do
         let(:params) do
           {
-            notify_service: true
+            notify_service: true,
           }
         end
 
@@ -649,13 +649,13 @@ describe 'redis' do
       describe 'with parameter no_appendfsync_on_rewrite' do
         let(:params) do
           {
-            no_appendfsync_on_rewrite: true
+            no_appendfsync_on_rewrite: true,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{no-appendfsync-on-rewrite.*yes}
+            'content' => %r{no-appendfsync-on-rewrite.*yes},
           )
         }
       end
@@ -665,7 +665,7 @@ describe 'redis' do
 
         it {
           is_expected.to contain_package(package_name).with(
-            'ensure' => '_VALUE_'
+            'ensure' => '_VALUE_',
           )
         }
       end
@@ -679,13 +679,13 @@ describe 'redis' do
       describe 'with parameter pid_file' do
         let(:params) do
           {
-            pid_file: '/path/to/redis.pid'
+            pid_file: '/path/to/redis.pid',
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{^pidfile /path/to/redis.pid$}
+            'content' => %r{^pidfile /path/to/redis.pid$},
           )
         }
       end
@@ -693,13 +693,13 @@ describe 'redis' do
       describe 'with parameter port' do
         let(:params) do
           {
-            port: 6666
+            port: 6666,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{^port 6666$}
+            'content' => %r{^port 6666$},
           )
         }
       end
@@ -707,7 +707,7 @@ describe 'redis' do
       describe 'with parameter protected-mode' do
         let(:params) do
           {
-            protected_mode: false
+            protected_mode: false,
           }
         end
 
@@ -717,13 +717,13 @@ describe 'redis' do
       describe 'with parameter hll_sparse_max_bytes' do
         let(:params) do
           {
-            hll_sparse_max_bytes: 42
+            hll_sparse_max_bytes: 42,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{^hll-sparse-max-bytes 42$}
+            'content' => %r{^hll-sparse-max-bytes 42$},
           )
         }
       end
@@ -731,13 +731,13 @@ describe 'redis' do
       describe 'with parameter hz' do
         let(:params) do
           {
-            hz: 42
+            hz: 42,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{^hz 42$}
+            'content' => %r{^hz 42$},
           )
         }
       end
@@ -745,13 +745,13 @@ describe 'redis' do
       describe 'with parameter latency_monitor_threshold' do
         let(:params) do
           {
-            latency_monitor_threshold: 42
+            latency_monitor_threshold: 42,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{^latency-monitor-threshold 42$}
+            'content' => %r{^latency-monitor-threshold 42$},
           )
         }
       end
@@ -759,13 +759,13 @@ describe 'redis' do
       describe 'with parameter rdbcompression' do
         let(:params) do
           {
-            rdbcompression: true
+            rdbcompression: true,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{rdbcompression.*yes}
+            'content' => %r{rdbcompression.*yes},
           )
         }
       end
@@ -774,13 +774,13 @@ describe 'redis' do
         context 'with a single rename' do
           let(:params) do
             {
-              rename_commands: { CONFIG: '""' }
+              rename_commands: { CONFIG: '""' },
             }
           end
 
           it {
             is_expected.to contain_file(config_file_orig).with(
-              'content' => %r{^rename-command CONFIG ""$}
+              'content' => %r{^rename-command CONFIG ""$},
             )
           }
         end
@@ -788,16 +788,16 @@ describe 'redis' do
         context 'with multiple renames' do
           let(:params) do
             {
-              rename_commands: { CONFIG: '""', RENAME: '""' }
+              rename_commands: { CONFIG: '""', RENAME: '""' },
             }
           end
 
           it {
             is_expected.to contain_file(config_file_orig).with(
-              'content' => %r{^rename-command CONFIG ""$}
+              'content' => %r{^rename-command CONFIG ""$},
             )
             is_expected.to contain_file(config_file_orig).with(
-              'content' => %r{^rename-command RENAME ""$}
+              'content' => %r{^rename-command RENAME ""$},
             )
           }
         end
@@ -805,7 +805,7 @@ describe 'redis' do
         context 'with empty hash' do
           let(:params) do
             {
-              'rename_commands' => {}
+              'rename_commands' => {},
             }
           end
 
@@ -816,13 +816,13 @@ describe 'redis' do
       describe 'with parameter repl_backlog_size' do
         let(:params) do
           {
-            repl_backlog_size: '_VALUE_'
+            repl_backlog_size: '_VALUE_',
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{repl-backlog-size.*_VALUE_}
+            'content' => %r{repl-backlog-size.*_VALUE_},
           )
         }
       end
@@ -830,13 +830,13 @@ describe 'redis' do
       describe 'with parameter repl_backlog_ttl' do
         let(:params) do
           {
-            repl_backlog_ttl: 42
+            repl_backlog_ttl: 42,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{^repl-backlog-ttl 42$}
+            'content' => %r{^repl-backlog-ttl 42$},
           )
         }
       end
@@ -844,13 +844,13 @@ describe 'redis' do
       describe 'with parameter repl_disable_tcp_nodelay' do
         let(:params) do
           {
-            repl_disable_tcp_nodelay: true
+            repl_disable_tcp_nodelay: true,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{repl-disable-tcp-nodelay.*yes}
+            'content' => %r{repl-disable-tcp-nodelay.*yes},
           )
         }
       end
@@ -858,13 +858,13 @@ describe 'redis' do
       describe 'with parameter repl_ping_slave_period' do
         let(:params) do
           {
-            repl_ping_slave_period: 42
+            repl_ping_slave_period: 42,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{^repl-ping-slave-period 42}
+            'content' => %r{^repl-ping-slave-period 42},
           )
         }
       end
@@ -872,13 +872,13 @@ describe 'redis' do
       describe 'with parameter repl_timeout' do
         let(:params) do
           {
-            repl_timeout: 1
+            repl_timeout: 1,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{repl-timeout.*1}
+            'content' => %r{repl-timeout.*1},
           )
         }
       end
@@ -886,13 +886,13 @@ describe 'redis' do
       describe 'with parameter repl_announce_ip' do
         let(:params) do
           {
-            repl_announce_ip: 'my.hostname.name.or.ip'
+            repl_announce_ip: 'my.hostname.name.or.ip',
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{replica-announce-ip.*my\.hostname\.name\.or\.ip}
+            'content' => %r{replica-announce-ip.*my\.hostname\.name\.or\.ip},
           )
         }
       end
@@ -900,13 +900,13 @@ describe 'redis' do
       describe 'with parameter repl_announce_port' do
         let(:params) do
           {
-            repl_announce_port: 1234
+            repl_announce_port: 1234,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{replica-announce-port.*1234}
+            'content' => %r{replica-announce-port.*1234},
           )
         }
       end
@@ -914,13 +914,13 @@ describe 'redis' do
       describe 'with parameter requirepass' do
         let(:params) do
           {
-            requirepass: '_VALUE_'
+            requirepass: '_VALUE_',
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{requirepass.*_VALUE_}
+            'content' => %r{requirepass.*_VALUE_},
           )
         }
       end
@@ -928,13 +928,13 @@ describe 'redis' do
       describe 'with parameter requirepass marked as sensitive' do
         let(:params) do
           {
-            requirepass: sensitive('_VALUE_')
+            requirepass: sensitive('_VALUE_'),
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => sensitive(%r{requirepass.*_VALUE_})
+            'content' => sensitive(%r{requirepass.*_VALUE_}),
           )
         }
       end
@@ -943,13 +943,13 @@ describe 'redis' do
         context 'true' do
           let(:params) do
             {
-              save_db_to_disk: true
+              save_db_to_disk: true,
             }
           end
 
           it {
             is_expected.to contain_file(config_file_orig).with(
-              'content' => %r{^save}
+              'content' => %r{^save},
             )
           }
         end
@@ -957,13 +957,13 @@ describe 'redis' do
         context 'false' do
           let(:params) do
             {
-              save_db_to_disk: false
+              save_db_to_disk: false,
             }
           end
 
           it {
             is_expected.to contain_file(config_file_orig).with(
-              'content' => %r{^save ""$}
+              'content' => %r{^save ""$},
             )
           }
         end
@@ -974,7 +974,7 @@ describe 'redis' do
           context 'default' do
             let(:params) do
               {
-                save_db_to_disk: true
+                save_db_to_disk: true,
               }
             end
 
@@ -990,7 +990,7 @@ describe 'redis' do
             let(:params) do
               {
                 save_db_to_disk: true,
-                save_db_to_disk_interval: { '900' => '2', '300' => '11', '60' => '10011' }
+                save_db_to_disk_interval: { '900' => '2', '300' => '11', '60' => '10011' },
               }
             end
 
@@ -1006,7 +1006,7 @@ describe 'redis' do
         context 'with save_db_to_disk false' do
           let(:params) do
             {
-              save_db_to_disk: false
+              save_db_to_disk: false,
             }
           end
 
@@ -1045,7 +1045,7 @@ describe 'redis' do
           let(:params) do
             {
               log_dir_group: 'logdirgroup',
-              service_group: '_VALUE_'
+              service_group: '_VALUE_',
             }
           end
 
@@ -1068,13 +1068,13 @@ describe 'redis' do
       describe 'with parameter set_max_intset_entries' do
         let(:params) do
           {
-            set_max_intset_entries: 42
+            set_max_intset_entries: 42,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{^set-max-intset-entries 42$}
+            'content' => %r{^set-max-intset-entries 42$},
           )
         }
       end
@@ -1082,13 +1082,13 @@ describe 'redis' do
       describe 'with parameter slave_priority' do
         let(:params) do
           {
-            slave_priority: 42
+            slave_priority: 42,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{^slave-priority 42$}
+            'content' => %r{^slave-priority 42$},
           )
         }
       end
@@ -1096,13 +1096,13 @@ describe 'redis' do
       describe 'with parameter slave_read_only' do
         let(:params) do
           {
-            slave_read_only: true
+            slave_read_only: true,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{slave-read-only.*yes}
+            'content' => %r{slave-read-only.*yes},
           )
         }
       end
@@ -1110,13 +1110,13 @@ describe 'redis' do
       describe 'with parameter slave_serve_stale_data' do
         let(:params) do
           {
-            slave_serve_stale_data: true
+            slave_serve_stale_data: true,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{slave-serve-stale-data.*yes}
+            'content' => %r{slave-serve-stale-data.*yes},
           )
         }
       end
@@ -1126,13 +1126,13 @@ describe 'redis' do
           let(:params) do
             {
               bind: '127.0.0.1',
-              slaveof: '_VALUE_'
+              slaveof: '_VALUE_',
             }
           end
 
           it {
             is_expected.to contain_file(config_file_orig).with(
-              'content' => %r{^slaveof _VALUE_}
+              'content' => %r{^slaveof _VALUE_},
             )
           }
         end
@@ -1141,13 +1141,13 @@ describe 'redis' do
           let(:params) do
             {
               bind: '10.0.0.1',
-              slaveof: '_VALUE_'
+              slaveof: '_VALUE_',
             }
           end
 
           it {
             is_expected.to contain_file(config_file_orig).with(
-              'content' => %r{^slaveof _VALUE_}
+              'content' => %r{^slaveof _VALUE_},
             )
           }
         end
@@ -1158,13 +1158,13 @@ describe 'redis' do
           let(:params) do
             {
               bind: '127.0.0.1',
-              replicaof: '_VALUE_'
+              replicaof: '_VALUE_',
             }
           end
 
           it {
             is_expected.to contain_file(config_file_orig).with(
-              'content' => %r{^replicaof _VALUE_}
+              'content' => %r{^replicaof _VALUE_},
             )
           }
         end
@@ -1173,13 +1173,13 @@ describe 'redis' do
           let(:params) do
             {
               bind: '10.0.0.1',
-              replicaof: '_VALUE_'
+              replicaof: '_VALUE_',
             }
           end
 
           it {
             is_expected.to contain_file(config_file_orig).with(
-              'content' => %r{^replicaof _VALUE_}
+              'content' => %r{^replicaof _VALUE_},
             )
           }
         end
@@ -1189,13 +1189,13 @@ describe 'redis' do
         context 'set to a value great or equal to zero' do
           let(:params) do
             {
-              slowlog_log_slower_than: 42
+              slowlog_log_slower_than: 42,
             }
           end
 
           it {
             is_expected.to contain_file(config_file_orig).with(
-              'content' => %r{^slowlog-log-slower-than 42$}
+              'content' => %r{^slowlog-log-slower-than 42$},
             )
           }
         end
@@ -1207,7 +1207,7 @@ describe 'redis' do
 
           it {
             is_expected.to contain_file(config_file_orig).with(
-              'content' => %r{^slowlog-log-slower-than -1$}
+              'content' => %r{^slowlog-log-slower-than -1$},
             )
           }
         end
@@ -1216,13 +1216,13 @@ describe 'redis' do
       describe 'with parameter slowlog_max_len' do
         let(:params) do
           {
-            slowlog_max_len: 42
+            slowlog_max_len: 42,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{^slowlog-max-len 42$}
+            'content' => %r{^slowlog-max-len 42$},
           )
         }
       end
@@ -1230,13 +1230,13 @@ describe 'redis' do
       describe 'with parameter stop_writes_on_bgsave_error' do
         let(:params) do
           {
-            stop_writes_on_bgsave_error: true
+            stop_writes_on_bgsave_error: true,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{stop-writes-on-bgsave-error.*yes}
+            'content' => %r{stop-writes-on-bgsave-error.*yes},
           )
         }
       end
@@ -1244,13 +1244,13 @@ describe 'redis' do
       describe 'with parameter syslog_enabled' do
         let(:params) do
           {
-            syslog_enabled: true
+            syslog_enabled: true,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{syslog-enabled yes}
+            'content' => %r{syslog-enabled yes},
           )
         }
       end
@@ -1259,13 +1259,13 @@ describe 'redis' do
         let(:params) do
           {
             syslog_enabled: true,
-            syslog_facility: '_VALUE_'
+            syslog_facility: '_VALUE_',
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{syslog-facility.*_VALUE_}
+            'content' => %r{syslog-facility.*_VALUE_},
           )
         }
       end
@@ -1273,13 +1273,13 @@ describe 'redis' do
       describe 'with parameter tcp_backlog' do
         let(:params) do
           {
-            tcp_backlog: 42
+            tcp_backlog: 42,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{^tcp-backlog 42$}
+            'content' => %r{^tcp-backlog 42$},
           )
         }
       end
@@ -1287,13 +1287,13 @@ describe 'redis' do
       describe 'with parameter tcp_keepalive' do
         let(:params) do
           {
-            tcp_keepalive: 42
+            tcp_keepalive: 42,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{^tcp-keepalive 42$}
+            'content' => %r{^tcp-keepalive 42$},
           )
         }
       end
@@ -1301,13 +1301,13 @@ describe 'redis' do
       describe 'with parameter timeout' do
         let(:params) do
           {
-            timeout: 42
+            timeout: 42,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{^timeout 42$}
+            'content' => %r{^timeout 42$},
           )
         }
       end
@@ -1315,13 +1315,13 @@ describe 'redis' do
       describe 'with parameter workdir' do
         let(:params) do
           {
-            workdir: '/var/workdir'
+            workdir: '/var/workdir',
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{^dir /var/workdir$}
+            'content' => %r{^dir /var/workdir$},
           )
         }
       end
@@ -1329,13 +1329,13 @@ describe 'redis' do
       describe 'with parameter zset_max_ziplist_entries' do
         let(:params) do
           {
-            zset_max_ziplist_entries: 42
+            zset_max_ziplist_entries: 42,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{zset-max-ziplist-entries 42}
+            'content' => %r{zset-max-ziplist-entries 42},
           )
         }
       end
@@ -1343,13 +1343,13 @@ describe 'redis' do
       describe 'with parameter zset_max_ziplist_value' do
         let(:params) do
           {
-            zset_max_ziplist_value: 42
+            zset_max_ziplist_value: 42,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{zset-max-ziplist-value 42}
+            'content' => %r{zset-max-ziplist-value 42},
           )
         }
       end
@@ -1357,13 +1357,13 @@ describe 'redis' do
       describe 'with parameter cluster_enabled-false' do
         let(:params) do
           {
-            cluster_enabled: false
+            cluster_enabled: false,
           }
         end
 
         it {
           is_expected.not_to contain_file(config_file_orig).with(
-            'content' => %r{cluster-enabled}
+            'content' => %r{cluster-enabled},
           )
         }
       end
@@ -1371,13 +1371,13 @@ describe 'redis' do
       describe 'with parameter cluster_enabled-true' do
         let(:params) do
           {
-            cluster_enabled: true
+            cluster_enabled: true,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{cluster-enabled.*yes}
+            'content' => %r{cluster-enabled.*yes},
           )
         }
       end
@@ -1386,13 +1386,13 @@ describe 'redis' do
         let(:params) do
           {
             cluster_enabled: true,
-            cluster_config_file: '_VALUE_'
+            cluster_config_file: '_VALUE_',
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{cluster-config-file.*_VALUE_}
+            'content' => %r{cluster-config-file.*_VALUE_},
           )
         }
       end
@@ -1401,13 +1401,13 @@ describe 'redis' do
         let(:params) do
           {
             cluster_enabled: true,
-            cluster_node_timeout: 42
+            cluster_node_timeout: 42,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{cluster-node-timeout 42}
+            'content' => %r{cluster-node-timeout 42},
           )
         }
       end
@@ -1416,13 +1416,13 @@ describe 'redis' do
         let(:params) do
           {
             cluster_enabled: true,
-            cluster_slave_validity_factor: 1
+            cluster_slave_validity_factor: 1,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{cluster-slave-validity-factor.*1}
+            'content' => %r{cluster-slave-validity-factor.*1},
           )
         }
       end
@@ -1431,13 +1431,13 @@ describe 'redis' do
         let(:params) do
           {
             cluster_enabled: true,
-            cluster_require_full_coverage: true
+            cluster_require_full_coverage: true,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{cluster-require-full-coverage.*yes}
+            'content' => %r{cluster-require-full-coverage.*yes},
           )
         }
       end
@@ -1446,7 +1446,7 @@ describe 'redis' do
         let(:params) do
           {
             cluster_enabled: true,
-            cluster_require_full_coverage: false
+            cluster_require_full_coverage: false,
           }
         end
 
@@ -1457,7 +1457,7 @@ describe 'redis' do
         let(:params) do
           {
             cluster_enabled: true,
-            cluster_migration_barrier: 1
+            cluster_migration_barrier: 1,
           }
         end
 
@@ -1479,25 +1479,25 @@ describe 'redis' do
             tls_ciphers: 'DEFAULT:!MEDIUM',
             tls_ciphersuites: 'TLS_CHACHA20_POLY1305_SHA256',
             tls_protocols: 'TLSv1.2 TLSv1.3',
-            tls_prefer_server_ciphers: true
+            tls_prefer_server_ciphers: true,
           }
         end
 
         it do
-          is_expected.to contain_file(config_file_orig).
-            with_content(%r{^tls-port 7777$}).
-            with_content(%r{^tls-cert-file\s*/etc/ssl/certs/dummy\.crt$}).
-            with_content(%r{^tls-key-file\s*/etc/ssl/private/dummy\.key$}).
-            with_content(%r{^tls-key-file-pass\s*_VALUE_$}).
-            with_content(%r{^tls-ca-cert-file\s*/etc/ssl/certs/ca_bundle\.pem$}).
-            with_content(%r{^tls-ca-cert-dir\s*/etc/ssl/some/dir$}).
-            with_content(%r{^tls-auth-clients\s*no$}).
-            with_content(%r{^tls-replication\s*yes$}).
-            with_content(%r{^tls-cluster\s*yes$}).
-            with_content(%r{^tls-ciphers\s*DEFAULT:!MEDIUM$}).
-            with_content(%r{^tls-ciphersuites\s*TLS_CHACHA20_POLY1305_SHA256$}).
-            with_content(%r{^tls-protocols\s*"TLSv1\.2\sTLSv1\.3"$}).
-            with_content(%r{^tls-prefer-server-ciphers\s*yes$})
+          is_expected.to contain_file(config_file_orig)
+            .with_content(%r{^tls-port 7777$})
+            .with_content(%r{^tls-cert-file\s*/etc/ssl/certs/dummy\.crt$})
+            .with_content(%r{^tls-key-file\s*/etc/ssl/private/dummy\.key$})
+            .with_content(%r{^tls-key-file-pass\s*_VALUE_$})
+            .with_content(%r{^tls-ca-cert-file\s*/etc/ssl/certs/ca_bundle\.pem$})
+            .with_content(%r{^tls-ca-cert-dir\s*/etc/ssl/some/dir$})
+            .with_content(%r{^tls-auth-clients\s*no$})
+            .with_content(%r{^tls-replication\s*yes$})
+            .with_content(%r{^tls-cluster\s*yes$})
+            .with_content(%r{^tls-ciphers\s*DEFAULT:!MEDIUM$})
+            .with_content(%r{^tls-ciphersuites\s*TLS_CHACHA20_POLY1305_SHA256$})
+            .with_content(%r{^tls-protocols\s*"TLSv1\.2\sTLSv1\.3"$})
+            .with_content(%r{^tls-prefer-server-ciphers\s*yes$})
         end
       end
 
@@ -1511,7 +1511,7 @@ describe 'redis' do
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => sensitive(%r{tls-key-file-pass.*_VALUE_})
+            'content' => sensitive(%r{tls-key-file-pass.*_VALUE_}),
           )
         }
       end
@@ -1519,7 +1519,7 @@ describe 'redis' do
       describe 'with parameter manage_service_file' do
         let(:params) do
           {
-            manage_service_file: true
+            manage_service_file: true,
           }
         end
 
@@ -1555,7 +1555,7 @@ describe 'redis' do
       describe 'with parameter manage_service_file set to false' do
         let(:params) do
           {
-            manage_service_file: false
+            manage_service_file: false,
           }
         end
 
@@ -1566,13 +1566,13 @@ describe 'redis' do
         let(:params) do
           {
             modules: ['/root/nullmodule.so'],
-            service_manage: false
+            service_manage: false,
           }
         end
 
         it {
-          is_expected.to contain_file(config_file_orig).
-            with_content(%r{^loadmodule /root/nullmodule.so$})
+          is_expected.to contain_file(config_file_orig)
+            .with_content(%r{^loadmodule /root/nullmodule.so$})
         }
       end
 
@@ -1584,21 +1584,21 @@ describe 'redis' do
         end
 
         it {
-          is_expected.to contain_file(config_file_orig).
-            with_content(%r{^user readolny on nopass ~\* resetchannels -@all \+get$})
+          is_expected.to contain_file(config_file_orig)
+            .with_content(%r{^user readolny on nopass ~\* resetchannels -@all \+get$})
         }
       end
 
       describe 'test io-threads for redis6' do
         let(:params) do
           {
-            io_threads: 4
+            io_threads: 4,
           }
         end
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{^io-threads 4$}
+            'content' => %r{^io-threads 4$},
           )
         }
       end
@@ -1612,7 +1612,7 @@ describe 'redis' do
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{^io-threads-do-reads yes$}
+            'content' => %r{^io-threads-do-reads yes$},
           )
         }
       end
@@ -1626,7 +1626,7 @@ describe 'redis' do
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{^dynamic-hz yes$}
+            'content' => %r{^dynamic-hz yes$},
           )
         }
       end
@@ -1640,7 +1640,7 @@ describe 'redis' do
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{^activedefrag yes$}
+            'content' => %r{^activedefrag yes$},
           )
         }
       end
@@ -1654,7 +1654,7 @@ describe 'redis' do
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{^jemalloc-bg-thread yes$}
+            'content' => %r{^jemalloc-bg-thread yes$},
           )
         }
       end
@@ -1674,43 +1674,43 @@ describe 'redis' do
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{^activedefrag yes$}
+            'content' => %r{^activedefrag yes$},
           )
         }
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{^active-defrag-ignore-bytes 200mb$}
+            'content' => %r{^active-defrag-ignore-bytes 200mb$},
           )
         }
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{^active-defrag-threshold-lower 11$}
+            'content' => %r{^active-defrag-threshold-lower 11$},
           )
         }
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{^active-defrag-threshold-upper 99$}
+            'content' => %r{^active-defrag-threshold-upper 99$},
           )
         }
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{^active-defrag-cycle-min 7$}
+            'content' => %r{^active-defrag-cycle-min 7$},
           )
         }
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{^active-defrag-cycle-max 23$}
+            'content' => %r{^active-defrag-cycle-max 23$},
           )
         }
 
         it {
           is_expected.to contain_file(config_file_orig).with(
-            'content' => %r{^active-defrag-max-scan-fields 1341$}
+            'content' => %r{^active-defrag-max-scan-fields 1341$},
           )
         }
       end
@@ -1764,18 +1764,18 @@ describe 'redis' do
             'ensure' => 'directory',
             'owner' => 'wdirowner',
             'group' => 'wdirgroup',
-            'mode' => '0750'
+            'mode' => '0750',
           )
         }
 
         if facts['os']['family'] == 'Debian'
           it {
-            is_expected.to contain_file('/etc/default/redis-server').
-              with(
+            is_expected.to contain_file('/etc/default/redis-server')
+              .with(
                 'ensure' => 'file',
                 'owner' => redis,
                 'group' => 'cfggroup',
-                'mode' => '0640'
+                'mode' => '0640',
               )
           }
         end
@@ -1795,12 +1795,12 @@ describe 'redis' do
 
         if facts['os']['family'] == 'Debian'
           it {
-            is_expected.to contain_file('/etc/default/redis-server').
-              with(
+            is_expected.to contain_file('/etc/default/redis-server')
+              .with(
                 'ensure' => 'file',
                 'owner' => 'dd_owner',
                 'group' => 'dd_group',
-                'mode' => '0242'
+                'mode' => '0242',
               )
           }
         end

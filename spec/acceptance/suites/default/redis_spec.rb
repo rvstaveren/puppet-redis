@@ -5,12 +5,12 @@ require 'spec_helper_acceptance'
 describe 'redis' do
   redis = case fact('os.family')
           when 'RedHat'
-            fact('os.release.major').to_i > 9 ? 'valkey' : 'redis'
+            (fact('os.release.major').to_i > 9) ? 'valkey' : 'redis'
           else
             'redis'
           end
 
-  redis_name = fact('os.family') == 'Debian' ? "#{redis}-server" : redis
+  redis_name = (fact('os.family') == 'Debian') ? "#{redis}-server" : redis
 
   include_examples 'an idempotent resource' do
     let(:manifest) { 'include redis' }
@@ -31,8 +31,8 @@ describe 'redis' do
   specify { expect(service(redis_name)).to be_running }
 
   specify 'redis should respond to ping command' do
-    expect(command("#{redis}-cli ping")).
-      to have_attributes(stdout: %r{PONG})
+    expect(command("#{redis}-cli ping"))
+      .to have_attributes(stdout: %r{PONG})
   end
 
   it 'runs successfully when using Redis apt repository', if: (fact('os.family') == 'Debian') do

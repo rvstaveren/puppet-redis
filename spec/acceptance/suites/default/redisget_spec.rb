@@ -5,7 +5,7 @@ require 'spec_helper_acceptance'
 describe 'redis::get() function' do
   redis = case fact('os.family')
           when 'RedHat'
-            fact('os.release.major').to_i > 9 ? 'valkey' : 'redis'
+            (fact('os.release.major').to_i > 9) ? 'valkey' : 'redis'
           else
             'redis'
           end
@@ -25,13 +25,13 @@ describe 'redis::get() function' do
   end
 
   specify do
-    expect(command("#{redis}-cli SET mykey \"Hello\"")).
-      to have_attributes(stdout: %r{OK})
+    expect(command("#{redis}-cli SET mykey \"Hello\""))
+      .to have_attributes(stdout: %r{OK})
   end
 
   specify do
-    expect(command("#{redis}-cli GET mykey")).
-      to have_attributes(stdout: %r{Hello})
+    expect(command("#{redis}-cli GET mykey"))
+      .to have_attributes(stdout: %r{Hello})
   end
 
   context 'with mykey set to Hello' do

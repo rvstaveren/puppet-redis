@@ -10,7 +10,7 @@ describe 'redis::sentinel' do
       let(:redis) do
         case facts['os']['family']
         when 'RedHat'
-          facts['os']['release']['major'].to_i > 9 ? 'valkey' : 'redis'
+          (facts['os']['release']['major'].to_i > 9) ? 'valkey' : 'redis'
         else
           'redis'
         end
@@ -74,8 +74,8 @@ describe 'redis::sentinel' do
         let(:expected_content) do
           <<~CONFIG
             port 26379
-            dir #{facts['os']['family'] == 'Debian' ? '/var/lib/redis' : '/tmp'}
-            daemonize #{facts['os']['family'] == 'RedHat' ? 'no' : 'yes'}
+            dir #{(facts['os']['family'] == 'Debian') ? '/var/lib/redis' : '/tmp'}
+            daemonize #{(facts['os']['family'] == 'RedHat') ? 'no' : 'yes'}
             supervised auto
             pidfile #{pidfile}
             protected-mode yes
@@ -93,17 +93,17 @@ describe 'redis::sentinel' do
         it { is_expected.to create_class('redis::sentinel') }
 
         it {
-          is_expected.to contain_file(config_file_orig).
-            with_ensure('file').
-            with_mode('0640').
-            with_owner(redis).
-            with_content(expected_content)
+          is_expected.to contain_file(config_file_orig)
+            .with_ensure('file')
+            .with_mode('0640')
+            .with_owner(redis)
+            .with_content(expected_content)
         }
 
         it {
-          is_expected.to contain_service("#{redis}-sentinel").
-            with_ensure('running').
-            with_enable('true')
+          is_expected.to contain_service("#{redis}-sentinel")
+            .with_ensure('running')
+            .with_enable('true')
         }
 
         it { is_expected.to contain_package(sentinel_package_name).with_ensure('installed') }
@@ -117,8 +117,8 @@ describe 'redis::sentinel' do
         end
 
         it {
-          is_expected.to contain_file(config_file_orig).
-            with_content(%r{^user readolny on nopass ~\* resetchannels -@all \+get$})
+          is_expected.to contain_file(config_file_orig)
+            .with_content(%r{^user readolny on nopass ~\* resetchannels -@all \+get$})
         }
       end
 
@@ -157,7 +157,7 @@ describe 'redis::sentinel' do
             tls_auth_clients: 'yes',
             tls_replication: true,
             sentinel_auth_user: 'default',
-            sentinel_auth_pass: '4321'
+            sentinel_auth_pass: '4321',
           }
         end
 
@@ -167,7 +167,7 @@ describe 'redis::sentinel' do
             port 26379
             tls-port 26380
             dir /tmp/redis
-            daemonize #{facts['os']['family'] == 'RedHat' ? 'no' : 'yes'}
+            daemonize #{(facts['os']['family'] == 'RedHat') ? 'no' : 'yes'}
             supervised auto
             pidfile #{pidfile}
             protected-mode no
@@ -218,7 +218,7 @@ describe 'redis::sentinel' do
             log_file: '/tmp/barn-sentinel.log',
             failover_timeout: 28_000,
             notification_script: '/path/to/bar.sh',
-            client_reconfig_script: '/path/to/foo.sh'
+            client_reconfig_script: '/path/to/foo.sh',
           }
         end
 
@@ -227,7 +227,7 @@ describe 'redis::sentinel' do
             bind 192.0.2.10 192.168.1.1
             port 26379
             dir /tmp/redis
-            daemonize #{facts['os']['family'] == 'RedHat' ? 'no' : 'yes'}
+            daemonize #{(facts['os']['family'] == 'RedHat') ? 'no' : 'yes'}
             supervised auto
             pidfile #{pidfile}
             protected-mode yes
@@ -261,7 +261,7 @@ describe 'redis::sentinel' do
 
         let(:params) do
           {
-            package_ensure: 'latest'
+            package_ensure: 'latest',
           }
         end
 

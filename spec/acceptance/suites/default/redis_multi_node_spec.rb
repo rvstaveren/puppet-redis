@@ -13,7 +13,7 @@ if hosts.length >= 3
 
     redis = case fact('os.family')
             when 'RedHat'
-              fact('os.release.major').to_i > 9 ? 'valkey' : 'redis'
+              (fact('os.release.major').to_i > 9) ? 'valkey' : 'redis'
             else
               'redis'
             end
