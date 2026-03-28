@@ -5,7 +5,7 @@ require 'spec_helper_acceptance'
 describe 'redis with deferred password' do
   redis = case fact('os.family')
           when 'RedHat'
-            fact('os.release.major').to_i > 9 ? 'valkey' : 'redis'
+            (fact('os.release.major').to_i > 9) ? 'valkey' : 'redis'
           else
             'redis'
           end

@@ -18,7 +18,7 @@ describe 'redis::instance' do
       let(:redis) do
         case facts['os']['family']
         when 'RedHat'
-          facts['os']['release']['major'].to_i > 9 ? 'valkey' : 'redis'
+          (facts['os']['release']['major'].to_i > 9) ? 'valkey' : 'redis'
         else
           'redis'
         end
@@ -42,18 +42,18 @@ describe 'redis::instance' do
         end
 
         it do
-          is_expected.to contain_file("#{config_file}.puppet").
-            with_content(%r{^bind 127.0.0.1}).
-            with_content(%r{^logfile /var/log/#{redis}/#{redis}-server-app2\.log}).
-            with_content(%r{^dir /var/lib/#{redis}/#{redis}-server-app2}).
-            with_content(%r{^unixsocket /var/run/#{redis}-server-app2/#{redis}\.sock})
+          is_expected.to contain_file("#{config_file}.puppet")
+            .with_content(%r{^bind 127.0.0.1})
+            .with_content(%r{^logfile /var/log/#{redis}/#{redis}-server-app2\.log})
+            .with_content(%r{^dir /var/lib/#{redis}/#{redis}-server-app2})
+            .with_content(%r{^unixsocket /var/run/#{redis}-server-app2/#{redis}\.sock})
         end
 
         it { is_expected.to contain_file("/var/lib/#{redis}/#{redis}-server-app2") }
 
         it do
-          is_expected.to contain_file("/etc/systemd/system/#{redis}-server-app2.service").
-            with_content(%r{ExecStart=/usr/bin/#{redis}-server #{config_file}})
+          is_expected.to contain_file("/etc/systemd/system/#{redis}-server-app2.service")
+            .with_content(%r{ExecStart=/usr/bin/#{redis}-server #{config_file}})
         end
 
         it { is_expected.to contain_service("#{redis}-server-app2.service").with_ensure(true).with_enable(true) }
@@ -69,10 +69,10 @@ describe 'redis::instance' do
         end
 
         it do
-          is_expected.to contain_file('/tmp/myorig.conf').
-            with_content(%r{^bind 127.0.0.1}).
-            with_content(%r{^myoption avalue}).
-            with_content(%r{^anotheroption anothervalue})
+          is_expected.to contain_file('/tmp/myorig.conf')
+            .with_content(%r{^bind 127.0.0.1})
+            .with_content(%r{^myoption avalue})
+            .with_content(%r{^anotheroption anothervalue})
         end
       end
     end
